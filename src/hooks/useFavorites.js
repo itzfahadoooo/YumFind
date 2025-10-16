@@ -1,19 +1,12 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export const useFavorites = () => {
-  const [favorites, setFavorites] = useState(() => {
-    const saved = localStorage.getItem('favorites');
-    return saved ? JSON.parse(saved) : [];
-  });
-
-  useEffect(() => {
-    localStorage.setItem('favorites', JSON.stringify(favorites));
-  }, [favorites]);
+  const [favorites, setFavorites] = useState([]);
 
   const toggleFavorite = (recipeId) => {
-    setFavorites(prev => {
+    setFavorites((prev) => {
       if (prev.includes(recipeId)) {
-        return prev.filter(id => id !== recipeId);
+        return prev.filter((id) => id !== recipeId);
       } else {
         return [...prev, recipeId];
       }
