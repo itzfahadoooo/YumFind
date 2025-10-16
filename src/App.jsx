@@ -1,39 +1,61 @@
-import { useEffect, useState } from "react";
-import EmptyFavorites from "./components/EmptyFavorites";
-import ErrorMessage from "./components/ErrorMessage";
-import Header from "./components/Header";
-import LoadingSpinner from "./components/LoadingSpinner";
-import RecipeDetails from "./components/RecipeDetails";
-import RecipeList from "./components/RecipeList";
-import { useFavorites } from "./hooks/useFavorites";
-import { useRecipes } from "./hooks/useRecipes";
+import { useEffect, useState } from "react"
+// eslint-disable-next-line no-unused-vars
+import { motion } from "framer-motion"
+import EmptyFavorites from "./components/EmptyFavorites"
+import ErrorMessage from "./components/ErrorMessage"
+import Header from "./components/Header"
+import LoadingSpinner from "./components/LoadingSpinner"
+import RecipeDetails from "./components/RecipeDetails"
+import RecipeList from "./components/RecipeList"
+import { useFavorites } from "./hooks/useFavorites"
+import { useRecipes } from "./hooks/useRecipes"
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.2,
+    },
+  },
+}
+
+// const itemVariants = {
+//   hidden: { opacity: 0, y: 10 },
+//   visible: {
+//     opacity: 1,
+//     y: 0,
+//     transition: { duration: 0.5, ease: "easeOut" },
+//   },
+// }
 
 const App = () => {
-  const [searchTerm, setSearchTerm] = useState("chicken");
-  const [selectedRecipe, setSelectedRecipe] = useState(null);
-  const [showFavorites, setShowFavorites] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("chicken")
+  const [selectedRecipe, setSelectedRecipe] = useState(null)
+  const [showFavorites, setShowFavorites] = useState(false)
 
-  const { recipes, loading, error, fetchRecipes, allRecipes } = useRecipes();
-  const { favorites, toggleFavorite } = useFavorites();
+  const { recipes, loading, error, fetchRecipes, allRecipes } = useRecipes()
+  const { favorites, toggleFavorite } = useFavorites()
 
   useEffect(() => {
-    fetchRecipes("chicken");
-  }, []);
+    fetchRecipes("chicken")
+  }, [])
 
   const handleSearch = (term) => {
     if (term.trim()) {
-      setSearchTerm(term);
-      fetchRecipes(term);
+      setSearchTerm(term)
+      fetchRecipes(term)
     }
-  };
+  }
 
   const handleToggleFavorites = () => {
-    setShowFavorites(!showFavorites);
-  };
+    setShowFavorites(!showFavorites)
+  }
 
   const displayedRecipes = showFavorites
     ? allRecipes.filter((recipe) => favorites.includes(recipe.idMeal))
-    : recipes;
+    : recipes
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -48,22 +70,37 @@ const App = () => {
 
       <main className="container mx-auto px-4 py-8">
         {showFavorites && (
-          <h2 className="text-2xl font-bold text-gray-800 mb-6">
+          <motion.h2
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+            className="text-2xl font-bold text-gray-800 mb-6"
+          >
             My Favorite Recipes ({favorites.length})
-          </h2>
+          </motion.h2>
         )}
 
         {loading && <LoadingSpinner />}
 
         {error && (
-          <ErrorMessage
-            message={error}
-            onRetry={() => fetchRecipes(searchTerm)}
-          />
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.3 }}
+          >
+            <ErrorMessage
+              message={error}
+              onRetry={() => fetchRecipes(searchTerm)}
+            />
+          </motion.div>
         )}
 
         {!loading && !error && displayedRecipes.length === 0 && (
-          <>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.4 }}
+          >
             {showFavorites ? (
               <EmptyFavorites />
             ) : (
@@ -76,29 +113,42 @@ const App = () => {
                 </p>
               </div>
             )}
-          </>
+          </motion.div>
         )}
 
         {!loading && !error && displayedRecipes.length > 0 && (
-          <RecipeList
-            recipes={displayedRecipes}
-            onRecipeClick={setSelectedRecipe}
-            favorites={favorites}
-            onToggleFavorite={toggleFavorite}
-          />
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+          >
+            <RecipeList
+              recipes={displayedRecipes}
+              onRecipeClick={setSelectedRecipe}
+              favorites={favorites}
+              onToggleFavorite={toggleFavorite}
+            />
+          </motion.div>
         )}
       </main>
 
       {selectedRecipe && (
-        <RecipeDetails
-          recipe={selectedRecipe}
-          onClose={() => setSelectedRecipe(null)}
-          isFavorite={favorites.includes(selectedRecipe.idMeal)}
-          onToggleFavorite={toggleFavorite}
-        />
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+        >
+          <RecipeDetails
+            recipe={selectedRecipe}
+            onClose={() => setSelectedRecipe(null)}
+            isFavorite={favorites.includes(selectedRecipe.idMeal)}
+            onToggleFavorite={toggleFavorite}
+          />
+        </motion.div>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default App;
+export default App
