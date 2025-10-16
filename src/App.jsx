@@ -62,10 +62,22 @@ const App = () => {
           />
         )}
 
-        {!loading &&
-          !error &&
-          displayedRecipes.length === 0 &&
-          showFavorites && <EmptyFavorites />}
+        {!loading && !error && displayedRecipes.length === 0 && (
+          <>
+            {showFavorites ? (
+              <EmptyFavorites />
+            ) : (
+              <div className="text-center py-12">
+                <p className="text-xl text-gray-600 mb-4">
+                  No recipes found for "{searchTerm}"
+                </p>
+                <p className="text-gray-500">
+                  Try searching for something else
+                </p>
+              </div>
+            )}
+          </>
+        )}
 
         {!loading && !error && displayedRecipes.length > 0 && (
           <RecipeList
