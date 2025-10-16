@@ -9,28 +9,20 @@ import { useFavorites } from "./hooks/useFavorites";
 import { useRecipes } from "./hooks/useRecipes";
 
 const App = () => {
-  const [searchTerm, setSearchTerm] = useState('chicken');
+  const [searchTerm, setSearchTerm] = useState("chicken");
   const [selectedRecipe, setSelectedRecipe] = useState(null);
   const [showFavorites, setShowFavorites] = useState(false);
-  
-  const { recipes, loading, error, fetchRecipes, loadSampleData } = useRecipes();
+
+  const { recipes, loading, error, fetchRecipes, allRecipes } = useRecipes();
   const { favorites, toggleFavorite } = useFavorites();
 
   useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      if (recipes.length === 0 && !loading) {
-        loadSampleData();
-      }
-    }, 5000);
-    
-    fetchRecipes('chicken');
-    
-    return () => clearTimeout(timeoutId);
+    fetchRecipes("chicken");
   }, []);
 
   const handleSearch = (term) => {
     if (term.trim()) {
-      setShowFavorites(false);
+      setSearchTerm(term);
       fetchRecipes(term);
     }
   };
@@ -40,7 +32,7 @@ const App = () => {
   };
 
   const displayedRecipes = showFavorites
-    ? recipes.filter(recipe => favorites.includes(recipe.idMeal))
+    ? allRecipes.filter((recipe) => favorites.includes(recipe.idMeal))
     : recipes;
 
   return (
@@ -67,13 +59,13 @@ const App = () => {
           <ErrorMessage
             message={error}
             onRetry={() => fetchRecipes(searchTerm)}
-            onLoadSample={loadSampleData}
           />
         )}
 
-        {!loading && !error && displayedRecipes.length === 0 && showFavorites && (
-          <EmptyFavorites />
-        )}
+        {!loading &&
+          !error &&
+          displayedRecipes.length === 0 &&
+          showFavorites && <EmptyFavorites />}
 
         {!loading && !error && displayedRecipes.length > 0 && (
           <RecipeList
