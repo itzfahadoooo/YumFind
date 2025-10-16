@@ -1,4 +1,4 @@
-# Recipe Finder App
+# YUMFIND - A Recipe Finder App 👨‍🍳
 
 A modern, responsive recipe finder application built with React and Tailwind CSS, powered by TheMealDB API.
 
@@ -22,5 +22,4 @@ A modern, responsive recipe finder application built with React and Tailwind CSS
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/recipe-finder-app.git
-cd recipe-finder-app
+git https://github.com/itzfahadoooo/YumFind.git
